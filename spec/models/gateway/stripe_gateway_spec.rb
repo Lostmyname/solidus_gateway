@@ -198,4 +198,18 @@ describe Spree::Gateway::StripeGateway do
       expect(provider).to receive(:capture).with(9855,'12345',anything).and_return(success_response)
     end
   end
+
+  describe '#localize_money' do
+    context 'with a currency that does not support cents' do
+      it 'multiplies the value by 100' do
+        expect(subject.send(:localize_money, 1999, {currency: "JPY"})).to eq(199900)
+      end
+    end
+
+    context 'with a currency that does support cents' do
+      it 'does not change the value' do
+        expect(subject.send(:localize_money, 12.34, {currency: "USD"})).to eq(12.34)
+      end
+    end
+  end
 end
